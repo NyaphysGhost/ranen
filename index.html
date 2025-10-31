@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍜 ラーメン推薦アプリ</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🍜 ラーメン推薦アプリ</h1>
+            <p class="subtitle">あなたの現在地で評判の良いラーメン屋を探します</p>
+        </header>
+
+        <div class="location-section">
+            <button id="getLocationBtn" class="btn-primary">
+                📍 現在地を取得
+            </button>
+            <p id="locationStatus" class="status-text"></p>
+        </div>
+
+        <div id="loading" class="loading hidden">
+            <div class="spinner"></div>
+            <p>ラーメン屋を検索中...</p>
+        </div>
+
+        <div id="results" class="results-container hidden">
+            <h2>おすすめのラーメン屋</h2>
+            <div id="restaurantList" class="restaurant-list"></div>
+        </div>
+
+        <div id="error" class="error-message hidden"></div>
+    </div>
+
+    <footer>
+        <p>現在地の位置情報を使用して、近くの評判の良いラーメン屋を検索します</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

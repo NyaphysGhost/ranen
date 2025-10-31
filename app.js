@@ -8,68 +8,77 @@ class RamenRecommender {
     }
 
     initializeEventListeners() {
-        const getLocationBtn = document.getElementById('getLocationBtn');
-        getLocationBtn.addEventListener('click', () => this.getUserLocation());
+        const locationForm = document.getElementById('locationForm');
+        locationForm.addEventListener('submit', (e) => this.handleLocationSubmit(e));
     }
 
-    // 現在地を取得
-    getUserLocation() {
+    // 場所の入力を処理
+    async handleLocationSubmit(event) {
+        event.preventDefault();
+
         const statusElement = document.getElementById('locationStatus');
         const errorElement = document.getElementById('error');
+        const locationInput = document.getElementById('locationInput');
 
-        errorElement.classList.add('hidden');
-        statusElement.textContent = '位置情報を取得中...';
+        const locationQuery = locationInput.value.trim();
 
-        if (!navigator.geolocation) {
-            this.showError('お使いのブラウザは位置情報サービスに対応していません。');
+        if (!locationQuery) {
+            this.showError('場所を入力してください。');
             return;
         }
 
-        navigator.geolocation.getCurrentPosition(
-            (position) => this.onLocationSuccess(position),
-            (error) => this.onLocationError(error),
-            {
-                enableHighAccuracy: true,
-                timeout: 10000,
-                maximumAge: 0
+        errorElement.classList.add('hidden');
+        statusElement.textContent = '場所を検索中...';
+
+        try {
+            // Nominatim APIで住所を座標に変換
+            const coordinates = await this.geocodeLocation(locationQuery);
+
+            if (coordinates) {
+                this.currentLocation = coordinates;
+                statusElement.textContent = `📍 ${locationQuery} の周辺を検索します`;
+                await this.findNearbyRamenShops();
+            } else {
+                this.showError('指定された場所が見つかりませんでした。別の場所を試してください。');
+                statusElement.textContent = '';
             }
-        );
-    }
-
-    // 位置情報取得成功時
-    async onLocationSuccess(position) {
-        this.currentLocation = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-        };
-
-        const statusElement = document.getElementById('locationStatus');
-        statusElement.textContent = `📍 位置情報を取得しました`;
-
-        await this.findNearbyRamenShops();
-    }
-
-    // 位置情報取得エラー時
-    onLocationError(error) {
-        const statusElement = document.getElementById('locationStatus');
-        let errorMessage = '';
-
-        switch(error.code) {
-            case error.PERMISSION_DENIED:
-                errorMessage = '位置情報の使用が拒否されました。ブラウザの設定を確認してください。';
-                break;
-            case error.POSITION_UNAVAILABLE:
-                errorMessage = '位置情報が利用できません。';
-                break;
-            case error.TIMEOUT:
-                errorMessage = '位置情報の取得がタイムアウトしました。';
-                break;
-            default:
-                errorMessage = '位置情報の取得中にエラーが発生しました。';
+        } catch (error) {
+            console.error('Geocoding error:', error);
+            this.showError('場所の検索中にエラーが発生しました。もう一度お試しください。');
+            statusElement.textContent = '';
         }
+    }
 
-        this.showError(errorMessage);
-        statusElement.textContent = '';
+    // 住所を座標に変換（Nominatim API使用）
+    async geocodeLocation(query) {
+        const encodedQuery = encodeURIComponent(query);
+        const url = `https://nominatim.openstreetmap.org/search?q=${encodedQuery}&format=json&limit=1&countrycodes=jp&accept-language=ja`;
+
+        try {
+            const response = await fetch(url, {
+                headers: {
+                    'User-Agent': 'RamenRecommendationApp/1.0'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Geocoding request failed');
+            }
+
+            const data = await response.json();
+
+            if (data && data.length > 0) {
+                return {
+                    lat: parseFloat(data[0].lat),
+                    lng: parseFloat(data[0].lon)
+                };
+            }
+
+            return null;
+        } catch (error) {
+            console.error('Geocoding error:', error);
+            throw error;
+        }
     }
 
     // 近くのラーメン屋を検索

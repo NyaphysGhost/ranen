@@ -73,7 +73,6 @@ ranen/
    - `opening_hours` が "closed" の店舗
    - `lifecycle` タグが "abandoned", "disused", "demolished" の店舗
    - `abandoned` または `disused` タグが "yes" の店舗
-3. **フォールバック**: APIからデータが取得できない場合、サンプルデータを表示
 
 ### 表示情報
 
@@ -185,7 +184,8 @@ return restaurants.slice(0, 10); // 10件 → 好みの件数に変更
 ### ラーメン屋が見つからない
 
 - 検索範囲を広げる（`app.js`の `radius` を増やす）
-- サンプルデータが自動的に表示されます
+- 別の場所や都市を検索してみてください
+- OpenStreetMapにデータが登録されていない地域もあります
 
 ### APIエラーが発生する
 

@@ -249,7 +249,8 @@ class RamenRecommender {
                     description: this.generateDescription(element.tags),
                     tags: this.extractTags(element.tags),
                     reviewCount: reviewCount,
-                    reviewSummary: this.generateReviewSummary(rating)
+                    reviewSummary: this.generateReviewSummary(rating),
+                    imageUrl: this.generateImageUrl()
                 };
 
                 restaurants.push(restaurant);
@@ -323,6 +324,24 @@ class RamenRecommender {
         return tagList;
     }
 
+    // ラーメン画像URLを生成
+    generateImageUrl() {
+        // Unsplashのラーメン画像を使用
+        const ramenImages = [
+            'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400&h=300&fit=crop', // 醤油ラーメン
+            'https://images.unsplash.com/photo-1632709810780-b5a4343cebec?w=400&h=300&fit=crop', // 味噌ラーメン
+            'https://images.unsplash.com/photo-1591814468924-caf88d1232e1?w=400&h=300&fit=crop', // 豚骨ラーメン
+            'https://images.unsplash.com/photo-1623341214825-9f4f963727da?w=400&h=300&fit=crop', // つけ麺
+            'https://images.unsplash.com/photo-1617093727343-374698b1b08d?w=400&h=300&fit=crop', // ラーメン全体
+            'https://images.unsplash.com/photo-1557872943-16a5ac26437e?w=400&h=300&fit=crop', // 豪華なラーメン
+            'https://images.unsplash.com/photo-1623341214657-7c61fc2c5299?w=400&h=300&fit=crop', // チャーシュー麺
+            'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=400&h=300&fit=crop', // 海苔ラーメン
+        ];
+
+        // ランダムに画像を選択
+        return ramenImages[Math.floor(Math.random() * ramenImages.length)];
+    }
+
     // レビュー要約を生成
     generateReviewSummary(rating) {
         const ratingNum = parseFloat(rating);
@@ -389,7 +408,8 @@ class RamenRecommender {
                 description: '濃厚な豚骨魚介スープが自慢の人気店。特製チャーシューは柔らかく、口の中でとろけます。深夜まで営業しているので、仕事帰りにも立ち寄れます。',
                 tags: ['豚骨魚介', '深夜営業', 'チャーシュー', 'つけ麺'],
                 reviewCount: 328,
-                reviewSummary: this.generateReviewSummary(4.5)
+                reviewSummary: this.generateReviewSummary(4.5),
+                imageUrl: 'https://images.unsplash.com/photo-1591814468924-caf88d1232e1?w=400&h=300&fit=crop'
             },
             {
                 name: 'ラーメン龍',
@@ -399,7 +419,8 @@ class RamenRecommender {
                 description: '創業50年の老舗ラーメン店。醤油ベースの透き通ったスープは、鶏ガラと野菜の旨味が凝縮されています。昔ながらの中華そばを求める方に最適。',
                 tags: ['老舗', '醤油ラーメン', '中華そば', 'カウンター席'],
                 reviewCount: 456,
-                reviewSummary: this.generateReviewSummary(4.7)
+                reviewSummary: this.generateReviewSummary(4.7),
+                imageUrl: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400&h=300&fit=crop'
             },
             {
                 name: '北海道味噌らーめん 札幌',
@@ -409,7 +430,8 @@ class RamenRecommender {
                 description: '北海道直送の味噌を使用した本格味噌ラーメン。バターとコーンのトッピングがスープと絶妙にマッチ。寒い日には特におすすめの一杯。',
                 tags: ['味噌ラーメン', '北海道', 'バターコーン', '個室あり'],
                 reviewCount: 289,
-                reviewSummary: this.generateReviewSummary(4.6)
+                reviewSummary: this.generateReviewSummary(4.6),
+                imageUrl: 'https://images.unsplash.com/photo-1632709810780-b5a4343cebec?w=400&h=300&fit=crop'
             },
             {
                 name: 'つけ麺 大勝軒',
@@ -419,7 +441,8 @@ class RamenRecommender {
                 description: 'つけ麺発祥の名店。濃厚な魚介豚骨つけ汁と極太麺の組み合わせは圧巻。スープ割りも忘れずにお楽しみください。行列必至の人気店。',
                 tags: ['つけ麺', '行列店', '極太麺', 'スープ割り'],
                 reviewCount: 512,
-                reviewSummary: this.generateReviewSummary(4.8)
+                reviewSummary: this.generateReviewSummary(4.8),
+                imageUrl: 'https://images.unsplash.com/photo-1623341214825-9f4f963727da?w=400&h=300&fit=crop'
             },
             {
                 name: '博多一風堂',
@@ -429,7 +452,8 @@ class RamenRecommender {
                 description: '博多ラーメンの代表格。クリーミーな豚骨スープと細麺のコンビネーションが絶品。替え玉システムでお腹いっぱい食べられます。',
                 tags: ['博多ラーメン', '豚骨', '替え玉無料', 'テイクアウト可'],
                 reviewCount: 423,
-                reviewSummary: this.generateReviewSummary(4.4)
+                reviewSummary: this.generateReviewSummary(4.4),
+                imageUrl: 'https://images.unsplash.com/photo-1617093727343-374698b1b08d?w=400&h=300&fit=crop'
             },
             {
                 name: '鶏白湯らーめん 鳥ノ介',
@@ -439,7 +463,8 @@ class RamenRecommender {
                 description: 'クリーミーな鶏白湯スープが特徴。コラーゲンたっぷりで美容にも良いと評判。女性客も多く、ヘルシー志向の方におすすめ。',
                 tags: ['鶏白湯', 'コラーゲン', 'ヘルシー', 'Wi-Fi'],
                 reviewCount: 267,
-                reviewSummary: this.generateReviewSummary(4.5)
+                reviewSummary: this.generateReviewSummary(4.5),
+                imageUrl: 'https://images.unsplash.com/photo-1557872943-16a5ac26437e?w=400&h=300&fit=crop'
             }
         ];
     }
@@ -478,6 +503,9 @@ class RamenRecommender {
                 <div class="restaurant-rating">
                     ${stars} ${restaurant.rating}
                 </div>
+            </div>
+            <div class="restaurant-image-container">
+                <img src="${restaurant.imageUrl}" alt="${restaurant.name}のラーメン" class="restaurant-image" loading="lazy">
             </div>
             <div class="restaurant-info">
                 <div class="info-item">📍 ${restaurant.address}</div>

@@ -168,7 +168,7 @@ class RamenRecommender {
             const data = await response.json();
 
             // ラーメン屋のデータを処理
-            this.restaurants = this.processRestaurantData(data.elements);
+            this.restaurants = await this.processRestaurantData(data.elements);
 
             if (this.restaurants.length === 0) {
                 this.showError('この地域では営業中のラーメン屋が見つかりませんでした。別の場所を検索してみてください。');
@@ -224,7 +224,7 @@ class RamenRecommender {
     }
 
     // レストランデータを処理
-    processRestaurantData(elements) {
+    async processRestaurantData(elements) {
         const restaurants = [];
 
         for (const element of elements) {
@@ -233,10 +233,13 @@ class RamenRecommender {
                 const rating = this.generateRating();
                 const reviewCount = Math.floor(Math.random() * 500) + 50;
 
+                // 住所を取得（OSMタグまたは逆ジオコーディング）
+                const address = await this.getAddress(element);
+
                 const restaurant = {
                     name: element.tags.name,
                     rating: rating,
-                    address: element.tags['addr:full'] || element.tags['addr:street'] || '住所情報なし',
+                    address: address,
                     distance: this.calculateDistance(
                         this.currentLocation.lat,
                         this.currentLocation.lng,
@@ -257,6 +260,90 @@ class RamenRecommender {
         // 評価でソート
         restaurants.sort((a, b) => b.rating - a.rating);
         return restaurants.slice(0, 10); // トップ10を返す
+    }
+
+    // 住所を取得（OSMタグから構築または逆ジオコーディング）
+    async getAddress(element) {
+        const tags = element.tags;
+
+        // 完全な住所がある場合
+        if (tags['addr:full']) {
+            return tags['addr:full'];
+        }
+
+        // OSMタグから住所を構築
+        const addressParts = [];
+
+        if (tags['addr:country']) addressParts.push(tags['addr:country']);
+        if (tags['addr:province'] || tags['addr:state']) {
+            addressParts.push(tags['addr:province'] || tags['addr:state']);
+        }
+        if (tags['addr:city']) addressParts.push(tags['addr:city']);
+        if (tags['addr:suburb'] || tags['addr:district']) {
+            addressParts.push(tags['addr:suburb'] || tags['addr:district']);
+        }
+        if (tags['addr:quarter']) addressParts.push(tags['addr:quarter']);
+        if (tags['addr:neighbourhood']) addressParts.push(tags['addr:neighbourhood']);
+        if (tags['addr:street']) {
+            let streetPart = tags['addr:street'];
+            if (tags['addr:housenumber']) {
+                streetPart += tags['addr:housenumber'];
+            }
+            addressParts.push(streetPart);
+        }
+
+        // 構築した住所がある場合
+        if (addressParts.length > 0) {
+            return addressParts.join('');
+        }
+
+        // 座標から逆ジオコーディング
+        const lat = element.lat || element.center?.lat;
+        const lon = element.lon || element.center?.lon;
+
+        if (lat && lon) {
+            try {
+                const reverseGeocodedAddress = await this.reverseGeocode(lat, lon);
+                if (reverseGeocodedAddress) {
+                    return reverseGeocodedAddress;
+                }
+            } catch (error) {
+                console.error('Reverse geocoding error:', error);
+            }
+        }
+
+        return '住所情報なし';
+    }
+
+    // 逆ジオコーディング（座標から住所を取得）
+    async reverseGeocode(lat, lon) {
+        try {
+            // Nominatimの利用規約を守るため、リクエスト間に遅延を入れる
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=ja`;
+
+            const response = await fetch(url, {
+                headers: {
+                    'User-Agent': 'RamenRecommendationApp/1.0'
+                }
+            });
+
+            if (!response.ok) {
+                return null;
+            }
+
+            const data = await response.json();
+
+            if (data && data.display_name) {
+                return data.display_name;
+            }
+
+            return null;
+        } catch (error) {
+            console.error('Reverse geocoding error:', error);
+            return null;
+        }
     }
 
     // 2点間の距離を計算（km）

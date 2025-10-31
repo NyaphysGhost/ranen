@@ -73,6 +73,10 @@ ranen/
    - `opening_hours` が "closed" の店舗
    - `lifecycle` タグが "abandoned", "disused", "demolished" の店舗
    - `abandoned` または `disused` タグが "yes" の店舗
+3. **住所の推測**:
+   - OpenStreetMapのタグから住所を構築（国、都道府県、市、区、町、番地など）
+   - タグが不完全な場合、Nominatim APIの逆ジオコーディングで座標から住所を取得
+   - 可能な限り正確な住所情報を表示
 
 ### 表示情報
 

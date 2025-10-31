@@ -10,7 +10,7 @@
     <div class="container">
         <header>
             <h1>🍜 ラーメン推薦アプリ</h1>
-            <p class="subtitle">指定した場所で評判の良いラーメン屋を探します</p>
+            <p class="subtitle">場所を指定または現在地で評判の良いラーメン屋を探します</p>
         </header>
 
         <div class="location-section">
@@ -21,13 +21,21 @@
                         id="locationInput"
                         class="location-input"
                         placeholder="場所を入力してください（例：東京駅、渋谷区、新宿三丁目）"
-                        required
                     >
                     <button type="submit" class="btn-primary">
                         🔍 検索
                     </button>
                 </div>
             </form>
+
+            <div class="divider">
+                <span>または</span>
+            </div>
+
+            <button id="getCurrentLocationBtn" class="btn-secondary">
+                📍 現在地から検索
+            </button>
+
             <p id="locationStatus" class="status-text"></p>
         </div>
 
@@ -45,7 +53,7 @@
     </div>
 
     <footer>
-        <p>場所を入力して、近くの評判の良いラーメン屋を検索します</p>
+        <p>場所を入力するか現在地を取得して、近くの評判の良いラーメン屋を検索します</p>
     </footer>
 
     <script src="app.js"></script>

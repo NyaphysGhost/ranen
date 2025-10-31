@@ -305,6 +305,7 @@ class RamenRecommender {
         card.className = 'restaurant-card';
 
         const stars = '⭐'.repeat(Math.round(restaurant.rating));
+        const mapsUrl = this.getGoogleMapsUrl(restaurant);
 
         card.innerHTML = `
             <div class="restaurant-header">
@@ -324,9 +325,20 @@ class RamenRecommender {
             <div class="restaurant-tags">
                 ${restaurant.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
             </div>
+            <div class="restaurant-actions">
+                <a href="${mapsUrl}" target="_blank" rel="noopener noreferrer" class="btn-maps">
+                    🗺️ Google Mapsで開く
+                </a>
+            </div>
         `;
 
         return card;
+    }
+
+    // Google Mapsの検索URLを生成
+    getGoogleMapsUrl(restaurant) {
+        const query = encodeURIComponent(`${restaurant.name} ${restaurant.address}`);
+        return `https://www.google.com/maps/search/?api=1&query=${query}`;
     }
 
     // 徒歩時間を計算（km → 分）
